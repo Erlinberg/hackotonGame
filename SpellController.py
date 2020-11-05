@@ -73,8 +73,6 @@ class SpellController():
                     if not collidedDot.active:
                         collidedDot.active = True
                         self.activeDots.append(collidedDot)
-                        
-
         elif event == pygame.MOUSEBUTTONUP:
             order = [dot.ID for dot in self.activeDots]
             print(order)
@@ -93,6 +91,10 @@ class SpellController():
                 self.castSpell(self.spells[tuple(key)])
             else:
                 self.recursionFindSpell(key[:-1])
+    '''
+        TO DO:
+            Cast Spell Properly
+    '''
 
     def castSpell(self, spell):
             print(spell)
