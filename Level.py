@@ -1,5 +1,5 @@
 import pygame
-from PIL import Image
+from Animator import Animation
 
 class Block(pygame.sprite.Sprite):
     def __init__(self,image,coords, group, offset, block_size):
@@ -11,13 +11,21 @@ class Block(pygame.sprite.Sprite):
         group.add(self)
 
 class Decoration(pygame.sprite.Sprite):
-    def __init__(self,image,coords, group, offset, block_size):
+    def __init__(self,images,coords, group, offset, block_size):
         super(Decoration, self).__init__()
 
-        self.image = image
+        self.images = images
+        self.image = self.images[0]
+        self.animationController = Animation(len(self.images),self)
+
         self.rect = pygame.Rect((offset[0]+coords[0]*block_size[0], offset[1]+coords[1]*block_size[1]), (block_size[0],block_size[1]))
 
         group.add(self)
+
+        
+    def update(self):
+        if self.animationController.animCount > 0:
+            self.animationController.animateRepeat(self.images, 1.4)
         
 class Level():
     def __init__(self,level, decorations,levelName,imageSetLevel,imageSetDecoration,offset,block_size):
@@ -26,7 +34,9 @@ class Level():
         self.levelName = levelName
         self.imageSetLevel = imageSetLevel #0: фон 1: стена 2: пол
 
-        self.imageSetDecoration = imageSetDecoration #0: фон 1: стена 2: пол
+        self.imageSetDecoration = [imageSetDecoration[0:1],imageSetDecoration[1:4],[imageSetDecoration[4]],[imageSetDecoration[5]],[imageSetDecoration[6]],[imageSetDecoration[7]]] #0: фон 1: стена 2: пол
+
+        print(self.imageSetDecoration)
         
         self.levelBlocks = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()

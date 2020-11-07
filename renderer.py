@@ -10,6 +10,9 @@ class Renderer():
         self.cameraOffset = [0,0]
         self.cameraSmoothness = 20
 
+    def fillBackground(self):
+            self.display.fill((0,0,0))
+
     def blitGroup(self, sprite_group):
         for sprite in sprite_group:
             self.display.blit(sprite.image, (sprite.rect.x-int(self.cameraOffset[0]),sprite.rect.y-int(self.cameraOffset[1])))
@@ -27,5 +30,8 @@ class Renderer():
         self.cameraOffset[0] += (playerRect.x-self.cameraOffset[0]-self.WIDTH//4+playerRect.width//2)/self.cameraSmoothness
         self.cameraOffset[1] += (playerRect.y-self.cameraOffset[1]-self.HEIGHT//4+playerRect.height//2)/self.cameraSmoothness
 
-    def update(self):
+    def update(self, isDark):
+        if isDark:
+            self.display.fill((75, 75, 100,0), special_flags=pygame.BLEND_RGBA_SUB)
+
         self.screen.blit(pygame.transform.scale(self.display,(self.WIDTH,self.HEIGHT)),(0,0))
