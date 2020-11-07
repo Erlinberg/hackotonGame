@@ -54,7 +54,7 @@ class Dot(pygame.sprite.Sprite):
         
 
 class SpellController():
-    def __init__(self, mouseController, imageStorage, renderer, player):
+    def __init__(self, mouseController, imageStorage, renderer, player,enemies):
         self.dots = [
             [Dot((0,0),imageStorage["spellSquare"][0]),Dot((0,1),imageStorage["spellSquare"][0]),Dot((0,2),imageStorage["spellSquare"][0])],
             [Dot((1,3),imageStorage["spellSquare"][0]),Dot((1,4),imageStorage["spellSquare"][0]),Dot((1,5),imageStorage["spellSquare"][0])],
@@ -64,13 +64,27 @@ class SpellController():
         self.activeDots = []
         self.dotsGroup = pygame.sprite.Group([j for sub in self.dots for j in sub])
 
-        self.spellsCode = {(4,2):"cutSpell"}
+        self.spellsCode = {
+            (4,0):"cutSpell",
+            (4,1):"cutSpell",
+            (4,2):"cutSpell",
+            (4,3):"cutSpell",
+            (4,5):"cutSpell",
+            (4,6):"cutSpell",
+            (4,7):"cutSpell",
+            (4,8):"cutSpell",
+            (4,7,8,5,2,1,0,3,6):"lightingSpell",
+        }
 
-        self.spells = {"cutSpell":(imageStorage["cutSpell"],8,5,[])}
+        self.spells = { #(image,range,damage)
+            "cutSpell":(imageStorage["cutSpell"],8,5),
+            "lightingSpell":(imageStorage["lightingSpell"],8,25)
+            } 
 
         self.spellGroup = pygame.sprite.Group()
         self.effects = pygame.sprite.Group([SpellSquareEffect((0,0), 196, 5,45,(83,168,57)),SpellSquareEffect((0,0), 100, 3,0,(237,5,5))])
-
+        
+        self.enemies = enemies
         self.player = player
         self.renderer = renderer
         self.mouseController = mouseController
@@ -121,7 +135,6 @@ class SpellController():
                         self.activeDots.append(collidedDot)
         elif event == pygame.MOUSEBUTTONUP:
             order = [dot.ID for dot in self.activeDots]
-            print(order)
             spell = self.recursionFindSpell(order)
             for dot in self.activeDots:
                 dot.active = False
@@ -140,8 +153,8 @@ class SpellController():
                 self.recursionFindSpell(key[:-1])
 
     def castSpell(self, spellName):
-            self.player.castingSpell()
-            newSpell = Spell(*self.spells[spellName],self.renderer,self.centerDot.rect.center)
+            self.player.castingSpell(spellName)
+            newSpell = Spell(*self.spells[spellName],self.enemies,self.renderer,self.centerDot.rect.center)
             self.spellGroup.add(newSpell)
 
                 

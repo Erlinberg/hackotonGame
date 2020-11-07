@@ -20,7 +20,7 @@ class Spell(pygame.sprite.Sprite):
     def intersects(self,enemyGroup):
         for sprite in enemyGroup:
             if self.radius.colliderect(sprite.rect):
-                sprite.dealDamage(damage)
+                sprite.dealDamage(self.damage)
     
     def update(self):
         if self.animationController.animateOnce(self.images, 3):

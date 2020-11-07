@@ -28,15 +28,13 @@ class Decoration(pygame.sprite.Sprite):
             self.animationController.animateRepeat(self.images, 1.4)
         
 class Level():
-    def __init__(self,level, decorations,levelName,imageSetLevel,imageSetDecoration,offset,block_size):
-        self.level = level # [[]]
-        self.decorations = decorations # [[]]
+    def __init__(self,levelName,imageSetLevel,imageSetDecoration,offset,block_size):
+        self.level = self.getData("level.txt") # [[]]
+        self.decorations = self.getData("deco.txt") # [[]]
         self.levelName = levelName
         self.imageSetLevel = imageSetLevel #0: фон 1: стена 2: пол
 
         self.imageSetDecoration = [imageSetDecoration[0:1],imageSetDecoration[1:4],[imageSetDecoration[4]],[imageSetDecoration[5]],[imageSetDecoration[6]],[imageSetDecoration[7]]] #0: фон 1: стена 2: пол
-
-        print(self.imageSetDecoration)
         
         self.levelBlocks = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
@@ -47,8 +45,15 @@ class Level():
         self.buildLevel(offset, block_size)
         self.buildDecoration(offset, block_size)
 
-    
         
+
+    
+    def getData(self,name):
+        data = []
+        with open(name,mode="r") as file:
+            data = [[int(element) for element in list(line.rstrip('\n'))] for line in file]
+        return data
+
 
     def buildLevel(self, offset, block_size):
         x,y = 0,0
