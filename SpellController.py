@@ -54,7 +54,7 @@ class Dot(pygame.sprite.Sprite):
         
 
 class SpellController():
-    def __init__(self, mouseController, imageStorage, renderer, player,enemies):
+    def __init__(self, mouseController, imageStorage, renderer, player, soundController):
         self.dots = [
             [Dot((0,0),imageStorage["spellSquare"][0]),Dot((0,1),imageStorage["spellSquare"][0]),Dot((0,2),imageStorage["spellSquare"][0])],
             [Dot((1,3),imageStorage["spellSquare"][0]),Dot((1,4),imageStorage["spellSquare"][0]),Dot((1,5),imageStorage["spellSquare"][0])],
@@ -84,10 +84,11 @@ class SpellController():
         self.spellGroup = pygame.sprite.Group()
         self.effects = pygame.sprite.Group([SpellSquareEffect((0,0), 196, 5,45,(83,168,57)),SpellSquareEffect((0,0), 100, 3,0,(237,5,5))])
         
-        self.enemies = enemies
+        self.enemies = []
         self.player = player
         self.renderer = renderer
         self.mouseController = mouseController
+        self.soundController = soundController
 
     @property
     def centerDot(self):
@@ -107,19 +108,19 @@ class SpellController():
         for effect in self.effects:
             effect.surfaceRect.center = self.centerDot.rect.center
 
-    def drawConnections(self,renderer):
+    def drawConnections(self):
             startPos = self.activeDots[0].rect.center
             for dot in self.activeDots[1:]:
-                renderer.drawLine(startPos,(dot.rect.center),(83,168,57),6)
+                self.renderer.drawLine(startPos,(dot.rect.center),(83,168,57),6)
                 startPos = dot.rect.center
 
-    def spellSquareUpdate(self,renderer):
-        self.drawConnections(renderer)
+    def spellSquareUpdate(self):
+        self.drawConnections()
         for effect in self.effects:
-            renderer.blitUI(effect)
+            self.renderer.blitUI(effect)
         for line in self.dots:
             for dot in line:
-                renderer.blitUI(dot)
+                self.renderer.blitUI(dot)
         
 
     def checkOnMouseClick(self,event):
@@ -140,9 +141,9 @@ class SpellController():
                 dot.active = False
             self.activeDots.clear()
 
-    def drawSpellSquare(self, renderer):
+    def drawSpellSquare(self):
         if self.activeDots:
-            self.spellSquareUpdate(renderer)
+            self.spellSquareUpdate()
             self.effects.update()
 
     def recursionFindSpell(self,key):
@@ -153,9 +154,20 @@ class SpellController():
                 self.recursionFindSpell(key[:-1])
 
     def castSpell(self, spellName):
-            self.player.castingSpell(spellName)
+            self.soundController.playSFXOnce(spellName)
             newSpell = Spell(*self.spells[spellName],self.enemies,self.renderer,self.centerDot.rect.center)
+            self.player.castingSpell(spellName, newSpell)
             self.spellGroup.add(newSpell)
+
+    def updateSpells(self):
+        for spell in self.spellGroup:
+            if spell.activated:
+                spell.update()
+            
+    def blitSpells(self):
+        for spell in self.spellGroup:
+            if spell.activated:
+                self.renderer.blitSprite(spell)
 
                 
 

@@ -15,6 +15,8 @@ class Spell(pygame.sprite.Sprite):
         self.damage = damage
         self.radius = pygame.Rect(self.rect.center, (radius*2, radius*2))
 
+        self.activated = False
+
         self.intersects(enemyGroup)
 
     def intersects(self,enemyGroup):

@@ -9,75 +9,105 @@ from renderer import Renderer
 from ImageLoader import ImageLoader
 from SpellController import SpellController
 from MouseController import MouseController
+from SoundController import SoundController
 # ----------------------------------------------------------------------------------------#
 
+pygame.mixer.pre_init(44100, -16, 2, 2048)
+pygame.mixer.init()
 pygame.init()
 
-WIDTH, HEIGHT = 720,406
-clock = pygame.time.Clock()
+class Game():
+    def __init__(self):
+        self.currentProgram = 'snow' # Current main loop
 
-renderer = Renderer(WIDTH, HEIGHT)
-imageLoader = ImageLoader()
-level = Level("level",imageLoader.imageStorage["level"],imageLoader.imageStorage["deco"],(30,30),(23,18))
+        WIDTH, HEIGHT = 720,406 # Output video quality
 
-player = Player((WIDTH, HEIGHT),imageLoader.imageStorage["player"],[(0,2),(2,5),(5,8),(8,11),(11,14),(14,22),(22,37)])
+        self.clock = pygame.time.Clock()
 
-# TEST
-boss = SnowBoss((105,105),imageLoader.imageStorage['snowBoss'])
-enemy = pygame.sprite.Group([boss])
-# TEST
+        self.renderer = Renderer(WIDTH, HEIGHT)
+        self.imageLoader = ImageLoader()
+        self.soundController = SoundController('bgMusic.ogg',[('cutSpell',0.1)],0.1)
+        self.mouseController = MouseController()
 
-playerMovement = PlayerMovement(player,3,level)
-mouseController = MouseController()
-spellController = SpellController(mouseController,imageLoader.imageStorage,renderer, player,enemy)
+        self.player = Player((WIDTH, HEIGHT),self.imageLoader.imageStorage["player"],[(0,2),(2,5),(5,8),(8,11),(11,14),(14,22),(22,37)])
+        self.spellController = SpellController(self.mouseController,self.imageLoader.imageStorage,self.renderer, self.player,self.soundController)
 
-running = True
-while running:
-    pressed_keys = pygame.key.get_pressed()
-    
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        playerMovement.animationChange(event)
-        spellController.checkOnMouseClick(event.type)
 
-    if not spellController.spellSquareActive:
-        playerMovement.move(pressed_keys)
-        player.update()
-        spellController.spellGroup.update()
-        level.decorationsGroup.update()
+        self.enemy = pygame.sprite.Group()
+        self.spellController.enemies = self.enemy
 
-    mouseController.update()
-
-    renderer.cameraUpdate(player.rect)
-
-    renderer.fillBackground()
-
-    renderer.blitGroup(level.levelBlocks)
-    renderer.blitGroup(level.decorationsGroup)
-    renderer.blitGroup(enemy)
-
-    renderer.blitSprite(player)
-
-    renderer.blitGroup(spellController.spellGroup)
-    
-    clock.tick(60)
-
-    # FPS Counter ----------------------------------------------------------------------------#
-    #fps = font.render(str(int(clock.get_fps())), True, pygame.Color('purple'))
-    #renderer.display.blit(fps, (50, 50))
-    #-----------------------------------------------------------------------------------------#
-
-    # IN-GAME RENDER -------------------------------------------------------------------------#
-    renderer.update(spellController.spellSquareActive)
-    #-----------------------------------------------------------------------------------------#
-
-    # UI RENDER ------------------------------------------------------------------------------#
-    spellController.drawSpellSquare(renderer)
-    #-----------------------------------------------------------------------------------------#
+        self.level = None
+        self.playerMovement = None
 
     
-    pygame.display.update()
 
-# Done! Time to quit.
-pygame.quit()
+    def snowLevelInit(self):
+        # TEST
+        self.enemy.empty()
+        boss = SnowBoss((105,105),self.imageLoader.imageStorage['snowBoss'])
+        self.enemy.add(boss)
+        # TEST
+
+        self.spellController.enemies = self.enemy
+
+        self.level = Level("level",self.imageLoader.imageStorage["snowLevel"],self.imageLoader.imageStorage["snowDeco"],(30,30),(23,18))
+        self.playerMovement = PlayerMovement(self.player,2,self.level)
+
+
+    def snowLevelRun(self):
+        pressed_keys = pygame.key.get_pressed()
+            
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            self.playerMovement.animationChange(event)
+            self.spellController.checkOnMouseClick(event.type)
+
+        if not self.spellController.spellSquareActive:
+            self.playerMovement.move(pressed_keys)
+            self.player.update()
+            self.spellController.updateSpells()
+            self.level.decorationsGroup.update()
+
+        self.mouseController.update()
+
+        self.renderer.cameraUpdate(self.player.rect)
+
+        self.renderer.fillBackground()
+
+        self.renderer.blitGroup(self.level.levelBlocks)
+        self.renderer.blitGroup(self.level.decorationsGroup)
+        self.renderer.blitGroup(self.enemy)
+
+        self.renderer.blitSprite(self.player)
+
+        self.spellController.blitSpells()
+            
+        self.clock.tick(60)
+
+        # IN-GAME RENDER -------------------------------------------------------------------------#
+        self.renderer.update(self.spellController.spellSquareActive)
+        #-----------------------------------------------------------------------------------------#
+
+        # UI RENDER ------------------------------------------------------------------------------#
+        self.spellController.drawSpellSquare()
+        #-----------------------------------------------------------------------------------------#
+
+            
+        pygame.display.update()
+
+        return True
+
+    def main(self):
+        self.snowLevelInit()
+        running = True
+        while running:
+            if self.currentProgram == 'menu':
+                pass
+            elif self.currentProgram == 'snow':
+                running = self.snowLevelRun()
+
+        pygame.quit()
+
+game = Game()
+game.main()

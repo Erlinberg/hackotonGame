@@ -13,6 +13,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = (screen[0]//2,screen[1]//2)
 
         self.spellCasting = False
+        self.currentSpell = None
         self.animationController = Animation(self.currentState[1],self)
 
         self.lives = 100
@@ -39,8 +40,13 @@ class Player(pygame.sprite.Sprite):
         self.rect = pygame.Rect((self.rect.x,self.rect.y), self.image.get_size())
         self.rect.center = center
 
-    def castingSpell(self,spellName):
+    def castingSpell(self,spellName,spell):
         self.spellCasting = spellName
+
+        if self.currentSpell:
+            self.currentSpell.activated = True
+
+        self.currentSpell = spell
         self.changeAnimation(self.spellAnims[spellName][0])
 
     def update(self):
@@ -49,4 +55,5 @@ class Player(pygame.sprite.Sprite):
         else:
             if self.animationController.animateOnce(self.images[self.currentState[0]:self.currentState[1]],self.spellAnims[self.spellCasting][1]):
                 self.spellCasting = ''
+                self.currentSpell.activated = True
                 self.changeAnimation(0)
