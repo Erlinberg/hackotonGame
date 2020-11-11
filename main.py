@@ -10,6 +10,7 @@ from ImageLoader import ImageLoader
 from SpellController import SpellController
 from MouseController import MouseController
 from SoundController import SoundController
+from Menu import Menu
 # ----------------------------------------------------------------------------------------#
 
 pygame.mixer.pre_init(44100, -16, 2, 2048)
@@ -18,7 +19,7 @@ pygame.init()
 
 class Game():
     def __init__(self):
-        self.currentProgram = 'snow' # Current main loop
+        self.currentProgram = 'menu' # Current main loop
 
         WIDTH, HEIGHT = 720,406 # Output video quality
 
@@ -26,8 +27,9 @@ class Game():
 
         self.renderer = Renderer(WIDTH, HEIGHT)
         self.imageLoader = ImageLoader()
-        self.soundController = SoundController('bgMusic.ogg',[('cutSpell',0.1)],0.1)
+        self.soundController = SoundController('bgMusic.ogg',[('cutSpell',0.1)],0.05)
         self.mouseController = MouseController()
+        self.menu = Menu(self.imageLoader.imageStorage['menu'],self)
 
         self.player = Player((WIDTH, HEIGHT),self.imageLoader.imageStorage["player"],[(0,2),(2,5),(5,8),(8,11),(11,14),(14,22),(22,37)])
         self.spellController = SpellController(self.mouseController,self.imageLoader.imageStorage,self.renderer, self.player,self.soundController)
@@ -39,7 +41,17 @@ class Game():
         self.level = None
         self.playerMovement = None
 
-    
+    def menuRun(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+
+        self.renderer.fillBackground()
+
+        self.menu.update(self.mouseController, self.renderer)
+
+        pygame.display.update()
+        return True
 
     def snowLevelInit(self):
         # TEST
@@ -52,7 +64,6 @@ class Game():
 
         self.level = Level("level",self.imageLoader.imageStorage["snowLevel"],self.imageLoader.imageStorage["snowDeco"],(30,30),(23,18))
         self.playerMovement = PlayerMovement(self.player,2,self.level)
-
 
     def snowLevelRun(self):
         pressed_keys = pygame.key.get_pressed()
@@ -103,7 +114,7 @@ class Game():
         running = True
         while running:
             if self.currentProgram == 'menu':
-                pass
+                running = self.menuRun()
             elif self.currentProgram == 'snow':
                 running = self.snowLevelRun()
 
