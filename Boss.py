@@ -11,6 +11,7 @@ class SnowBoss(pygame.sprite.Sprite): #make class containing our boses
 
         self.rect = pygame.Rect((pos), self.image.get_size()) #make rectangle for the image
         self.lives = 100 #amount of lives
+        self.defaultHP = 100 #amount of lives
 
         #self.animationController = Animation(self.currentState[1],self)
 

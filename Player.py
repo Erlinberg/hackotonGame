@@ -15,13 +15,29 @@ class Player(pygame.sprite.Sprite):
         self.spellCasting = False
         self.currentSpell = None
         self.animationController = Animation(self.currentState[1],self)
-
+        
+        self.defaultHP = 100
         self.lives = 100
+
+        self.defaultMana = 100
+        self.mana = 100
 
         self.spellAnims = {
             "cutSpell":(5,1.8),
-            "lightingSpell":(6,1)
+            "lightingSpell":(6,1),
+            "explosionSpell":(6,1)
         }
+
+        self.timerStart = 0
+
+    def startTimer(self):
+        self.timerStart = pygame.time.get_ticks()
+
+    def timerUpdate(self):
+        if not self.mana == self.defaultMana:
+            seconds=(pygame.time.get_ticks()-self.timerStart)/1000 #calculate how many seconds
+            if seconds > 4:
+                self.mana += 1
 
     @property
     def currentAnimation(self):
@@ -47,6 +63,8 @@ class Player(pygame.sprite.Sprite):
             self.currentSpell.activated = True
 
         self.currentSpell = spell
+        self.mana -= self.currentSpell.manaConsuptions
+        self.startTimer()
         self.changeAnimation(self.spellAnims[spellName][0])
 
     def update(self):
@@ -57,3 +75,5 @@ class Player(pygame.sprite.Sprite):
                 self.spellCasting = ''
                 self.currentSpell.activated = True
                 self.changeAnimation(0)
+
+        self.timerUpdate()

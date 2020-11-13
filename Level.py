@@ -59,11 +59,12 @@ class Level():
         x,y = 0,0
         for row in self.level:
             for element in row:
-                img = self.imageSetLevel[element]
-                block = Block(img,(x,y),self.levelBlocks, offset, block_size)
-        
-                if element == 1:
-                    self.walls.add(block)
+                if element:
+                    img = self.imageSetLevel[element]
+                    block = Block(img,(x,y),self.levelBlocks, offset, block_size)
+            
+                    if element == 1:
+                        self.walls.add(block)
                 x += 1
             x,y = 0,y+1
 

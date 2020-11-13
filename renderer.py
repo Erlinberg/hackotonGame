@@ -22,6 +22,12 @@ class Renderer():
     
     def blitUI(self,ui):
         self.screen.blit(ui.image, ui.rect)
+
+    def blitUISeparate(self,image,rect):
+        self.screen.blit(image, rect)
+
+    def drawUIRect(self, color, rect):
+        return pygame.draw.rect(self.screen, color, rect)
     
     def drawLine(self,startPos,endPos,color,width):
         return pygame.draw.line(self.screen, color, startPos, endPos, width)

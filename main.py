@@ -11,6 +11,7 @@ from SpellController import SpellController
 from MouseController import MouseController
 from SoundController import SoundController
 from Menu import Menu
+from AmountBars import AmountBars
 # ----------------------------------------------------------------------------------------#
 
 pygame.mixer.pre_init(44100, -16, 2, 2048)
@@ -27,13 +28,14 @@ class Game():
 
         self.renderer = Renderer(WIDTH, HEIGHT)
         self.imageLoader = ImageLoader()
-        self.soundController = SoundController('bgMusic.ogg',[('cutSpell',0.1)],0.05)
+        self.soundController = SoundController('bgMusic.ogg',[('cutSpell',0.1),('lightingSpell',0.1),('explosionSpell',0.1)],0.05)
         self.mouseController = MouseController()
         self.menu = Menu(self.imageLoader.imageStorage['menu'],self)
 
         self.player = Player((WIDTH, HEIGHT),self.imageLoader.imageStorage["player"],[(0,2),(2,5),(5,8),(8,11),(11,14),(14,22),(22,37)])
         self.spellController = SpellController(self.mouseController,self.imageLoader.imageStorage,self.renderer, self.player,self.soundController)
 
+        self.amountBars = AmountBars(self.player, None, self.imageLoader.imageStorage['bars'],(WIDTH//2,HEIGHT//2))
 
         self.enemy = pygame.sprite.Group()
         self.spellController.enemies = self.enemy
@@ -59,6 +61,8 @@ class Game():
         boss = SnowBoss((105,105),self.imageLoader.imageStorage['snowBoss'])
         self.enemy.add(boss)
         # TEST
+
+        self.amountBars.boss = boss
 
         self.spellController.enemies = self.enemy
 
@@ -102,6 +106,7 @@ class Game():
 
         # UI RENDER ------------------------------------------------------------------------------#
         self.spellController.drawSpellSquare()
+        self.amountBars.drawBars(self.renderer)
         #-----------------------------------------------------------------------------------------#
 
             

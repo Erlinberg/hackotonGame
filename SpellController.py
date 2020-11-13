@@ -74,11 +74,13 @@ class SpellController():
             (4,7):"cutSpell",
             (4,8):"cutSpell",
             (4,7,8,5,2,1,0,3,6):"lightingSpell",
+            (4,7,8):"explosionSpell"
         }
 
-        self.spells = { #(image,range,damage)
-            "cutSpell":(imageStorage["cutSpell"],8,5),
-            "lightingSpell":(imageStorage["lightingSpell"],8,25)
+        self.spells = { #(image,range,damage,yOffset)
+            "cutSpell":(imageStorage["cutSpell"],8,5,0,10),
+            "lightingSpell":(imageStorage["lightingSpell"],2,50,130,40),
+            "explosionSpell":(imageStorage["beamSpell"],20,25,75,30)
             } 
 
         self.spellGroup = pygame.sprite.Group()
@@ -154,6 +156,7 @@ class SpellController():
                 self.recursionFindSpell(key[:-1])
 
     def castSpell(self, spellName):
+        if not self.player.mana - self.spells[spellName][-1] < 0:
             self.soundController.playSFXOnce(spellName)
             newSpell = Spell(*self.spells[spellName],self.enemies,self.renderer,self.centerDot.rect.center)
             self.player.castingSpell(spellName, newSpell)
