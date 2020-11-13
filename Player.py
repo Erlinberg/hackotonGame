@@ -10,7 +10,7 @@ class Player(pygame.sprite.Sprite):
 
         self.image = self.images[0]
         self.rect = self.image.get_rect()
-        self.rect.center = (screen[0]//2,screen[1]//2)
+        self.rect.center = (20*23,22*23)
 
         self.spellCasting = False
         self.currentSpell = None

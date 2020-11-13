@@ -1,12 +1,9 @@
 import pygame
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, image, centerPos, onclick, yOffset):
+    def __init__(self, image, pos, onclick):
         self.image = image
-        self.rect = self.image.get_rect()
-
-        self.rect.center = centerPos
-        self.rect.y -= yOffset
+        self.rect = pygame.Rect(pos,self.image.get_size())
 
         self.onclick = onclick
 
@@ -20,8 +17,8 @@ class Menu():
         self.image = images[0]
         self.rect = self.image.get_rect()
 
-        self.playButton = Button(images[1],self.rect.center,self.playButtonOnClick,100)
-        self.quitButton = Button(images[2],self.rect.center,self.quitButtonOnClick,-50)
+        self.playButton = Button(images[2],(464,188),self.playButtonOnClick)
+        self.quitButton = Button(images[1],(52,200),self.quitButtonOnClick,)
 
         self.game = game
 

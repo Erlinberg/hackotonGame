@@ -31,11 +31,13 @@ class Level():
     def __init__(self,levelName,imageSetLevel,imageSetDecoration,offset,block_size):
         self.level = self.getData("level.txt") # [[]]
         self.decorations = self.getData("deco.txt") # [[]]
+
         self.levelName = levelName
         self.imageSetLevel = imageSetLevel #0: фон 1: стена 2: пол
 
         self.imageSetDecoration = [imageSetDecoration[0:1],imageSetDecoration[1:4],[imageSetDecoration[4]],[imageSetDecoration[5]],[imageSetDecoration[6]],[imageSetDecoration[7]]] #0: фон 1: стена 2: пол
-        
+        print(self.imageSetDecoration)
+
         self.levelBlocks = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
 

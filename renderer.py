@@ -11,7 +11,7 @@ class Renderer():
         self.cameraSmoothness = 20
 
     def fillBackground(self):
-            self.display.fill((0,0,0))
+            self.display.fill((0,0,20))
 
     def blitGroup(self, sprite_group):
         for sprite in sprite_group:
