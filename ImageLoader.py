@@ -12,6 +12,7 @@ class ImageLoader():
             if not path == "Graphics":
                 key = path[9:]
                 result[key] = []
+                files.sort()
                 for f in files:
                     image = pygame.image.load("Graphics/{0}/{1}".format(key,f)).convert()
                     image.set_colorkey((0,255,0)) 
