@@ -86,7 +86,7 @@ class SpellController():
         self.spellGroup = pygame.sprite.Group()
         self.effects = pygame.sprite.Group([SpellSquareEffect((0,0), 196, 5,45,(83,168,57)),SpellSquareEffect((0,0), 100, 3,0,(237,5,5))])
         
-        self.enemies = []
+        self.enemy = None
         self.player = player
         self.renderer = renderer
         self.mouseController = mouseController
@@ -158,7 +158,7 @@ class SpellController():
     def castSpell(self, spellName):
         if not self.player.mana - self.spells[spellName][-1] < 0:
             self.soundController.playSFXOnce(spellName)
-            newSpell = Spell(*self.spells[spellName],self.enemies,self.renderer,self.centerDot.rect.center)
+            newSpell = Spell(*self.spells[spellName],self.enemy,self.renderer,self.centerDot.rect.center)
             self.player.castingSpell(spellName, newSpell)
             self.spellGroup.add(newSpell)
 

@@ -12,6 +12,7 @@ from MouseController import MouseController
 from SoundController import SoundController
 from Menu import Menu
 from AmountBars import AmountBars
+from Timer import TimerController
 # ----------------------------------------------------------------------------------------#
 
 pygame.mixer.pre_init(44100, -16, 2, 2048)
@@ -25,6 +26,7 @@ class Game():
         WIDTH, HEIGHT = 720,406 # Output video quality
 
         self.clock = pygame.time.Clock()
+        self.timerController = TimerController()
 
         self.renderer = Renderer(WIDTH, HEIGHT)
         self.imageLoader = ImageLoader()
@@ -37,8 +39,7 @@ class Game():
 
         self.amountBars = AmountBars(self.player, None, self.imageLoader.imageStorage['bars'],(WIDTH//2,HEIGHT//2))
 
-        self.enemy = pygame.sprite.Group()
-        self.spellController.enemies = self.enemy
+        self.boss = None
 
         self.level = None
         self.playerMovement = None
@@ -57,14 +58,12 @@ class Game():
 
     def snowLevelInit(self):
         # TEST
-        self.enemy.empty()
-        boss = SnowBoss((105,105),self.imageLoader.imageStorage['snowBoss'])
-        self.enemy.add(boss)
+        self.boss = SnowBoss((105,105),self.imageLoader.imageStorage['snowBoss'],pygame.image.load('snow.png'), 1000, self.player, 300, self.timerController)
         # TEST
 
-        self.amountBars.boss = boss
+        self.amountBars.boss = self.boss
 
-        self.spellController.enemies = self.enemy
+        self.spellController.enemy = self.boss
 
         self.level = Level("level",self.imageLoader.imageStorage["snowLevel"],self.imageLoader.imageStorage["snowDeco"],(30,30),(23,18))
         self.playerMovement = PlayerMovement(self.player,2,self.level)
@@ -83,6 +82,7 @@ class Game():
             self.player.update()
             self.spellController.updateSpells()
             self.level.decorationsGroup.update()
+            self.boss.update()
 
         self.mouseController.update()
 
@@ -92,9 +92,11 @@ class Game():
 
         self.renderer.blitGroup(self.level.levelBlocks)
         self.renderer.blitGroup(self.level.decorationsGroup)
-        self.renderer.blitGroup(self.enemy)
+        self.renderer.blitSprite(self.boss)
 
         self.renderer.blitSprite(self.player)
+
+        self.renderer.blitGroup(self.boss.snowflakes)
 
         self.spellController.blitSpells()
             

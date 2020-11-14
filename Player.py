@@ -10,7 +10,7 @@ class Player(pygame.sprite.Sprite):
 
         self.image = self.images[0]
         self.rect = self.image.get_rect()
-        self.rect.center = (20*23,22*23)
+        self.rect.center = (20*23,22*23 - 1)
 
         self.spellCasting = False
         self.currentSpell = None
@@ -66,6 +66,9 @@ class Player(pygame.sprite.Sprite):
         self.mana -= self.currentSpell.manaConsuptions
         self.startTimer()
         self.changeAnimation(self.spellAnims[spellName][0])
+    
+    def freeze(self):
+        pass
 
     def update(self):
         if not self.spellCasting:

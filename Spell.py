@@ -2,7 +2,7 @@ import pygame
 from Animator import Animation
 
 class Spell(pygame.sprite.Sprite):
-    def __init__(self,imageSet,radius,damage, yOffset, mana, enemyGroup, renderer, centerPos):
+    def __init__(self,imageSet,radius,damage, yOffset, mana, enemy, renderer, centerPos):
         super(Spell, self).__init__()
         self.images = imageSet
         self.image = self.images[0]
@@ -19,13 +19,11 @@ class Spell(pygame.sprite.Sprite):
         self.activated = False
         self.manaConsuptions = mana
 
-        self.intersects(enemyGroup)
+        self.intersects(enemy)
 
-    def intersects(self,enemyGroup):
-        for sprite in enemyGroup:
-            if self.radius.colliderect(sprite.rect):
-                sprite.dealDamage(self.damage)
-        print(self.radius)
+    def intersects(self,enemy):
+        if self.radius.colliderect(enemy.rect):
+            enemy.dealDamage(self.damage)
             
     
     def update(self):
